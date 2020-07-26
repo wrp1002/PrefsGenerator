@@ -1,7 +1,7 @@
 # PrefsGenerator
 This python script will help to create a preferences plist file for you that's used with an iOS tweak. It's meant to be used to make quick rough drafts for preferences.
 
-So far, I'v only included cell types that I've used an am familiar with:
+So far, I'v only included cell types that I've used and am familiar with:
 ```
 PSGroupCell, PSSwitchCell, PSSliderCell, PSSegmentCell
 ```
