@@ -1,14 +1,17 @@
 
 import inspect
 
+# ======================== Customization ========================
+
 companyName = "companyname"
 defaultReloadPrefsFunction = "ReloadPrefs"
 outputFile = "output.txt"
 
+
+# ======================== Other variables ========================
+
 tweakName = "tweakname"
 packageName = "com." + companyName + "." + tweakName
-
-
 prefsTitle = "Title"
 
 header = """<?xml version="1.0" encoding="UTF-8"?>
