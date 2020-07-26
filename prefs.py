@@ -1,7 +1,7 @@
 
 import inspect
 
-companyName = "wrp1002"
+companyName = "companyname"
 defaultReloadPrefsFunction = "ReloadPrefs"
 outputFile = "output.txt"
 
