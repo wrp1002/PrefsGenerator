@@ -40,6 +40,8 @@ finalFile = header
 def GetDataType(val):
 	if type(val) is list:
 		return "array"
+	elif type(val) is dict:
+		return "dict"
 
 	val = str(val)
 
@@ -72,13 +74,13 @@ def GetInputWithBounds(prompt, min, max):
 
 	return val
 
+def ProcessDict(cellType, tags, extraTabs = 0):
 
-def BuildDict(cellType, tags):
-	global finalFile
+	newDict =  "\t" * extraTabs + "<dict>\n"
 
-	newDict =  "		<dict>\n"
-	newDict += "			<key>cell</key>\n"
-	newDict += "			<string>" + cellType + "</string>\n"
+	if cellType:
+		newDict += "\t" * extraTabs + "\t<key>cell</key>\n"
+		newDict += "\t" * extraTabs + "\t<string>" + cellType + "</string>\n"
 
 
 	for key in tags.keys():
@@ -88,24 +90,37 @@ def BuildDict(cellType, tags):
 		val = tags[key]
 		dataType = GetDataType(val)
 
-		newDict += "			<key>" + key + "</key>\n"
+		newDict += "\t" * extraTabs + "\t<key>" + key + "</key>\n"
 		if dataType == "bool":
 			val = str(val)
-			newDict += "			<" + val.lower() + "/>\n"
+			newDict += "\t" * extraTabs + "\t<" + val.lower() + "/>\n"
+
 		elif dataType == "array":
-			newDict += "			<array>\n"
+			newDict += "\t" * extraTabs + "\t<array>\n"
 			
 			for i in tags[key]:
 				val = str(i)
 				dataType = GetDataType(val)
-				newDict += "				<" + dataType + ">" + val + "</" + dataType + ">\n"
+				newDict += "\t" * extraTabs + "\t\t<" + dataType + ">" + val + "</" + dataType + ">\n"
 
-			newDict += "			</array>\n"
+			newDict += "\t" * extraTabs + "\t</array>\n"
+
+		elif dataType == "dict":
+			newDict += ProcessDict("", tags[key], extraTabs + 1)
+
 		else:
 			val = str(val)
-			newDict += "			<" + dataType + ">" + val + "</" + dataType + ">\n"
+			newDict += "\t" * extraTabs + "\t<" + dataType + ">" + val + "</" + dataType + ">\n"
 	
-	newDict += "		</dict>\n\n"
+	newDict += "\t" * extraTabs + "</dict>\n\n"
+	return newDict
+
+
+
+def BuildDict(cellType, tags):
+	global finalFile
+
+	newDict = ProcessDict(cellType, tags, 2)
 
 	finalFile += newDict
 	
@@ -165,8 +180,28 @@ def PSSegmentCell():
 	tags["PostNotification"] = GetInput("PostNotification", packageName + "/" + defaultReloadPrefsFunction)
 	BuildDict(inspect.currentframe().f_code.co_name, tags)
 
+def PSButtonCell():
+	tags = {}
 
-cellFunctions = [PSGroupCell, PSSwitchCell, PSSliderCell, PSSegmentCell]
+	tags["label"] = GetInput("Label", "Button")
+	tags["action"] = GetInput("Action", "ClickButton")
+	confirmation = GetInput("Ask Confirmation", "false", ["true", "false"])
+
+	if confirmation == "true":
+		tags["isDestructive"] = GetInput("Is Destructive (alternative color)", "false", ["true", "false"])
+
+		confirmation = {}
+		confirmation["prompt"] = GetInput("Prompt", "Are you sure?")
+		confirmation["title"] = GetInput("Title", "Ok")
+		#confirmation["okTitle"] = GetInput("OK Title", "OK")
+		confirmation["cancelTitle"] = GetInput("Cancel Title", "Cancel")
+		tags["confirmation"] = confirmation
+		
+
+	BuildDict(inspect.currentframe().f_code.co_name, tags)
+
+
+cellFunctions = [PSGroupCell, PSSwitchCell, PSSliderCell, PSSegmentCell, PSButtonCell]
 
 
 # ======================== Main ========================
