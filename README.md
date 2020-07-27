@@ -3,7 +3,7 @@ This python script will help to create a preferences plist file for you that's u
 
 So far, I'v only included cell types that I've used and am familiar with:
 ```
-PSGroupCell, PSSwitchCell, PSSliderCell, PSSegmentCell
+PSGroupCell, PSSwitchCell, PSSliderCell, PSSegmentCell, PSButtonCell
 ```
 
 ### Getting Started
